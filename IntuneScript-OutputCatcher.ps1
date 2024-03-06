@@ -15,7 +15,7 @@
 
 #scriptId variable - this needs to be set before running the script!
 #$scriptId = "ddf14782-b75e-4479-afae-779e0b248e6f" WARNING: This is just an example
-$scriptId = "edf14392-b75e-4418-bfbe-724e0a128e6f"
+$scriptId = ""
 
 #checking if $scriptId is present; exiting if it's null
 if (!$scriptId) 
