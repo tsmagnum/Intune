@@ -1,8 +1,8 @@
 #region Credits
 # Author: Federico Lillacci - Coesione Srl - www.coesione.net
 # GitHub: https://github.com/tsmagnum
-# Version: 1.0
-# Date: 04/03/2024
+# Version: 1.1
+# Date: 06/03/2024
 #
 #
 # Thanks to Micheal Griswold
@@ -26,8 +26,8 @@ if (!$scriptId)
     }
 
 #connecting to MS Graph
-#Update-MSGraphEnvironment -SchemaVersion 'beta'
-#Connect-MSGraph
+Update-MSGraphEnvironment -SchemaVersion 'beta'
+Connect-MSGraph
 
 #creating two empty arryas to store the results
 $jsonArray = @()
@@ -39,7 +39,13 @@ $graphUrl = "deviceManagement/deviceManagementScripts/$($scriptId)"+
 
 #making the Graph request and converting to a PS Object the JSON results contained in the resultMessage
 $graphResult = Invoke-MSGraphRequest -HttpMethod GET -Url $graphUrl | Get-MSGraphAllPages
-$jsonArray = ($graphResult | Where-Object {$_.errorcode -eq 0 -and $_.resultMessage -like "*"}).resultMessage | ConvertFrom-Json
+
+foreach ($result in $graphResult)
+{
+    $deserializedObj = $result.resultMessage | ConvertFrom-Json
+
+    $jsonArray += $deserializedObj
+}
 
 #nested looping through the array of results converted from JSON:
 #inside the main array, we have a nested array when a computer contains more than a PST file
@@ -67,3 +73,6 @@ $resultsArray | Format-Table
 
 #uncomment to export to CSV; modify the path accordingly
 #$resultsArray | export-csv -NoTypeInformation -Path pstFiles.csv
+
+#how many computer were processed
+Write-Host -ForegroundColor Cyan "Script eseguito su $($graphResult.Count) computer"
